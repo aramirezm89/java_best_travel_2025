@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: antonio
+      changes:
+        - sqlFile:
+            path: db/changelog/db.changelog-1.0-create-tables.sql
+            relativeToChangelogFile: false
+
+  - changeSet:
+      id: 2
+      author: antonio
+      changes:
+        - sqlFile:
+            path: db/changelog/db.changelog-1.1-insert-data.sql
+            relativeToChangelogFile: false

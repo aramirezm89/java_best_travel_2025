@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/best_travel}
+    username: ${DB_USERNAME:aramirezm}
+    password: ${DB_PASSWORD:Ramirez1989}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 600000
+server:
+  port: 4000
+
+  jpa:
+    hibernate:
+      ddl-auto: none   # Muy importante para que Liquibase maneje el esquema
+    show-sql: true     # Opcional, solo para ver las consultas en consola
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
