@@ -1,6 +1,4 @@
 package com.debuggeando_ideas.best_travel_2025.domain.entities;
-
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,17 +13,17 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
-@Entity(name = "hotel")
-public class HotelEntity implements  Serializable {
+@Entity(name = "tour")
+public class TourEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50)
-    private String name;
-    @Column(length = 50)
-    private String address;
-    private Integer rating;
-    private BigDecimal price;
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<ReservationEntity> reservations;
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<TicketEntity> tickets;
+    @ManyToOne
+    @JoinColumn(name = "id_customer")
+    private CustomerEntity customer;
+
 }

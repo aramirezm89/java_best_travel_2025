@@ -16,7 +16,7 @@ server:
   jpa:
     hibernate:
       ddl-auto: none   # Muy importante para que Liquibase maneje el esquema
-    show-sql: true     # Opcional, solo para ver las consultas en consola
+      show-sql: true     # Opcional, solo para ver las consultas en consola
     properties:
       hibernate:
         format_sql: true
