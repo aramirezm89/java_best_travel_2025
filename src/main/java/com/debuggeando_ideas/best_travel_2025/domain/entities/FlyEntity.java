@@ -31,6 +31,6 @@ public class FlyEntity implements Serializable {
     private String destinyName;
     private BigDecimal price;
     @Enumerated(EnumType.STRING)
-    private Aeroline aeroline;
+    private Aeroline aeroLine;
 
 }
