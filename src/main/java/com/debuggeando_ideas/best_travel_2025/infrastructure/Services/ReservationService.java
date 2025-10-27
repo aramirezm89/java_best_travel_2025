@@ -56,12 +56,27 @@ public class ReservationService implements IReservationService {
 
     @Override
     public ReservationResponse update(ReservationRequest request, UUID uuid) {
-        return null;
+
+        var hotel = this.hotelRepository.findById(request.getHotelId()).orElseThrow();
+        var reservationToUpdate = this.reservationRepository.findById(uuid).orElseThrow();
+
+        reservationToUpdate.setHotel(hotel);
+        reservationToUpdate.setTotalDays(request.getTotalDays());
+        reservationToUpdate.setPrice(hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage)));
+        reservationToUpdate.setDateStart(LocalDate.now());
+        reservationToUpdate.setDateEnd(LocalDate.now().plusDays(request.getTotalDays()));
+        reservationToUpdate.setDateTimeReservation(LocalDateTime.now());
+
+        var reservationUpdated = this.reservationRepository.save(reservationToUpdate);
+        log.info("Reservation updated: {}", reservationUpdated);
+        return this.toReservationResponse(reservationUpdated);
     }
 
     @Override
     public void delete(UUID uuid) {
-
+        var reservationToDelete = this.reservationRepository.findById(uuid).orElseThrow();
+        this.reservationRepository.delete(reservationToDelete);
+        log.info("Reservation deleted: {}", reservationToDelete.getId());
     }
 
     ReservationResponse toReservationResponse(ReservationEntity reservationEntity){
@@ -73,5 +88,13 @@ public class ReservationService implements IReservationService {
         return reservationResponse;
 
     }
+
+    @Override
+    public BigDecimal findPrice(Long hotelId) {
+        var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
+        return hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage));
+    }
     private static final BigDecimal charges_price_percentage =  BigDecimal.valueOf(0.20);
+
+
 }
