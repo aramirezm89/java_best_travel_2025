@@ -1,5 +1,8 @@
 package com.debuggeando_ideas.best_travel_2025;
 
+import com.debuggeando_ideas.best_travel_2025.domain.entities.ReservationEntity;
+import com.debuggeando_ideas.best_travel_2025.domain.entities.TicketEntity;
+import com.debuggeando_ideas.best_travel_2025.domain.entities.TourEntity;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -42,9 +48,12 @@ public class BestTravel2025Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+   /*     var vuelos = flyRepository.findById(1L).orElseThrow();
+        var hoteles = hotelRepository.findById(7L).orElseThrow();*/
+
     /*    System.out.println("Best Travel 2025");
-        var hoteles = hotelRepository.findById(7L).get();
-        var vuelos = flyRepository.findById(1L).get();
+
+
         var ticket = ticketRepository.findById(UUID.fromString("12345678-1234-5678-2236-567812345678")).get();
         var reservation = reservationRepository.findById(UUID.fromString("12345678-1234-5678-1234-567812345678")).get();
         var customer = customerRepository.findById("VIKI771012HMCRG093").get();
@@ -76,5 +85,43 @@ public class BestTravel2025Application implements CommandLineRunner {
         log.info("Hoteles por nombre: {}", hotelesPorNombre);
         log.info("Hoteles por rating: {}", hotelesPorRating);
         log.info("Hoteles por reserva: {}", hotelesPorReserva);*/
+
+/*
+        var customer = customerRepository.findById("VIKI771012HMCRG093").orElseThrow();
+        log.info(customer.toString());
+
+        var tour = TourEntity.builder().customer(customer).build();
+
+        var ticket = TicketEntity.builder().id(UUID.randomUUID())
+                .price(vuelos.getPrice().multiply(BigDecimal.TEN))
+                .arrivalDate(LocalDate.now())
+                .departureDate(LocalDate.now())
+                .purchaseDate(LocalDate.now())
+                .fly(vuelos)
+                .customer(customer)
+                .build();
+
+        var reservation = ReservationEntity.builder().id(UUID.randomUUID())
+                .dateTimeReservation(LocalDateTime.now())
+                .dateEnd(LocalDate.now())
+                .dateStart(LocalDate.now())
+                .hotel(hoteles)
+                .customer(customer)
+                .totalDays(2)
+                .price(hoteles.getPrice().multiply(BigDecimal.TEN))
+                .build();
+
+        tour.addReservation(reservation);
+        tour.updateReservation();
+        tour.addTicket(ticket);
+        tour.updateTicket();
+*/
+
+      /*  System.out.println("--SAVING---");
+        var tourSaved = this.tourRepository.save(tour);*/
+
+
+
+
     }
 }

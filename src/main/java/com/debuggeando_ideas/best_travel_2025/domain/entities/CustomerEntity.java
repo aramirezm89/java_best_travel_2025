@@ -32,7 +32,7 @@ public class CustomerEntity implements Serializable {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TourEntity> tours;
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -42,4 +42,5 @@ public class CustomerEntity implements Serializable {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<TicketEntity> tickets;
+
 }
