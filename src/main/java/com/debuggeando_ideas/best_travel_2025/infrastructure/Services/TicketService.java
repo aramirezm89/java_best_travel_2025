@@ -9,7 +9,6 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.TicketRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITicketService;
 import com.debuggeando_ideas.best_travel_2025.util.BestTravelUtil;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Transactional
