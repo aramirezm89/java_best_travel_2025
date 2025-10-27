@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "tickets")
+@RequestMapping(path = "ticket")
 @AllArgsConstructor
 public class TicketController {
     private final ITicketService ticketService;

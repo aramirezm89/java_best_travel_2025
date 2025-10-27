@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class ReservationRequest implements Serializable {
     private String clientId;
     private Long hotelId;
+    private Integer totalDays;
 }

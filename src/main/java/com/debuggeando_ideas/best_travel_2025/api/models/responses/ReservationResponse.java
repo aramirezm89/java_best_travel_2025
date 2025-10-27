@@ -1,5 +1,6 @@
 package com.debuggeando_ideas.best_travel_2025.api.models.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +19,11 @@ import java.util.UUID;
 @Builder
 public class ReservationResponse implements Serializable {
     private UUID id;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTimeReservation;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateStart;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateEnd;
     private BigDecimal price;
     private Integer totalDays;
