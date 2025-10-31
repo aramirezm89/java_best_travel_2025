@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 @Builder
 public class FlyResponse implements Serializable {
     private Long id;
-
     private Double originLat;
     private Double originLng;
     private Double destinyLat;
