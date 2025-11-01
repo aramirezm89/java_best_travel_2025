@@ -74,13 +74,13 @@ public class TorService implements ITourService {
                 .reservations(reservations)
                 .build();
         var tourPersisted = this.tourRepository.save(tourToPersist);
-        return this.tourResponse(tourPersisted);
+        return this.toTourResponse(tourPersisted);
     }
 
     @Override
     public TourResponse read(Long id) {
-
-        return null;
+        var tour = this.tourRepository.findById(id).orElseThrow();
+        return this.toTourResponse(tour);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class TorService implements ITourService {
 
     }
 
-    private TourResponse tourResponse(TourEntity tourEntity) {
+    private TourResponse toTourResponse(TourEntity tourEntity) {
        return TourResponse.builder()
                 .id(tourEntity.getId())
                 .ticketIds(tourEntity.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet()))
