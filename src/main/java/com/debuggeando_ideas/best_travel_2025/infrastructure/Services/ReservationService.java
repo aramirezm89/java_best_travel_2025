@@ -94,7 +94,7 @@ public class ReservationService implements IReservationService {
         var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
         return hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage));
     }
-    private static final BigDecimal charges_price_percentage =  BigDecimal.valueOf(0.20);
+    public static final BigDecimal charges_price_percentage =  BigDecimal.valueOf(0.20);
 
 
 }
