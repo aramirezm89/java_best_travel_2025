@@ -35,12 +35,15 @@ public class TourEntity implements Serializable {
     private CustomerEntity customer;
 
     @PrePersist
-    @PreRemove
     public void updateFk(){
         this.tickets.forEach(ticket -> ticket.setTour(this));
         this.reservations.forEach(reservation -> reservation.setTour(this));
     }
-
+    @PreRemove
+    public void removeFK() {
+        this.tickets.forEach(ticket -> ticket.setTour(null));
+        this.reservations.forEach(reservation -> reservation.setTour(null));
+    }
 
     public void addTicket(TicketEntity ticket) {
         if(Objects.isNull(this.tickets)) this.tickets = new HashSet<>();
