@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class TorService implements ITourService {
+public class TourService implements ITourService {
 
     private final TourRepository tourRepository;
     private final FlyRepository flyRepository;
@@ -58,24 +58,21 @@ public class TorService implements ITourService {
         var customer = this.customerRepository.findById(request.getCustomerId()).orElseThrow();
         //obtengo un listado de todos los vuelos segun la id que llega en la request
         var flights = new HashSet<FlyEntity>();
-        request.getFlights().forEach(flight -> this.flyRepository.findById(flight.getId()).orElseThrow());
+        request.getFlights().forEach(flight -> flights.add(this.flyRepository.findById(flight.getId()).orElseThrow()));
         //inserto los tickets en la base de datos con los vuelos y el cliente
         var tickets = this.tourHelper.createTickets(flights, customer);
 
         //obtengo un listado de todos los hoteles segun la id que llega en la request
-        var hotels= new HashMap<HotelEntity,Integer>();
-        request.getHotels().forEach(hotel -> hotels.put(this.hotelRepository.findById(hotel.getId()).orElseThrow(),hotel.getTotalDays()));
+        var hotels = new HashMap<HotelEntity, Integer>();
+        request.getHotels().forEach(hotel -> hotels.put(this.hotelRepository.findById(hotel.getId()).orElseThrow(), hotel.getTotalDays()));
         //inserto las reservaciones en la base de datos con los hoteles y el cliente
         var reservations = this.tourHelper.createReservations(hotels, customer);
 
-        var tourToPersist = TourEntity.builder()
-                .customer(customer)
-                .tickets(tickets)
-                .reservations(reservations)
-                .build();
+        var tourToPersist = TourEntity.builder().customer(customer).tickets(tickets).reservations(reservations).build();
         var tourPersisted = this.tourRepository.save(tourToPersist);
         return this.toTourResponse(tourPersisted);
     }
+
 
     @Override
     public TourResponse read(Long id) {
@@ -86,13 +83,12 @@ public class TorService implements ITourService {
     @Override
     public void delete(Long aLong) {
 
+        var tourToDelete = this.tourRepository.findById(aLong).orElseThrow();
+        this.tourRepository.delete(tourToDelete);
+
     }
 
     private TourResponse toTourResponse(TourEntity tourEntity) {
-       return TourResponse.builder()
-                .id(tourEntity.getId())
-                .ticketIds(tourEntity.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet()))
-                .reservationIds(tourEntity.getReservations().stream().map(ReservationEntity::getId).collect(Collectors.toSet()))
-                .build();
+        return TourResponse.builder().id(tourEntity.getId()).ticketIds(tourEntity.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet())).reservationIds(tourEntity.getReservations().stream().map(ReservationEntity::getId).collect(Collectors.toSet())).build();
     }
 }
