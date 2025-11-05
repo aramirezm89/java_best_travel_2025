@@ -5,6 +5,7 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.ReservationRep
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.TicketRepository;
 import com.debuggeando_ideas.best_travel_2025.util.BestTravelUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import static com.debuggeando_ideas.best_travel_2025.infrastructure.Services.Tic
 @Transactional
 @Component
 @AllArgsConstructor
+@Slf4j
 public class TourHelper {
 
     private final TicketRepository ticketRepository;
@@ -30,7 +32,7 @@ public class TourHelper {
         var response = new HashSet<TicketEntity>(flights.size());
 
         for (FlyEntity fly : flights) {
-            var ticketToPersist  = TicketEntity.builder()
+            var ticketToPersist = TicketEntity.builder()
                     .id(UUID.randomUUID())
                     .price(fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage)))
                     .departureDate(BestTravelUtil.getRandomSoon())
@@ -44,11 +46,11 @@ public class TourHelper {
         return response;
     }
 
-    public Set<ReservationEntity> createReservations(HashMap<HotelEntity,Integer> hotels, CustomerEntity customer) {
+    public Set<ReservationEntity> createReservations(HashMap<HotelEntity, Integer> hotels, CustomerEntity customer) {
         var response = new HashSet<ReservationEntity>(hotels.size());
 
-        hotels.forEach((hotel, totalDays)->{
-            var reservationToPersist  = ReservationEntity.builder()
+        hotels.forEach((hotel, totalDays) -> {
+            var reservationToPersist = ReservationEntity.builder()
                     .id(UUID.randomUUID())
                     .totalDays(totalDays)
                     .dateTimeReservation(LocalDateTime.now())
@@ -61,5 +63,33 @@ public class TourHelper {
             response.add(this.reservationRepository.save(reservationToPersist));
         });
         return response;
+    }
+
+    public TicketEntity createTicket(FlyEntity fly, CustomerEntity customer) {
+        var ticketToPersist = TicketEntity.builder()
+                .id(UUID.randomUUID())
+                .price(fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage)))
+                .departureDate(BestTravelUtil.getRandomSoon())
+                .arrivalDate(BestTravelUtil.getRandomLatter())
+                .purchaseDate(LocalDate.now())
+                .fly(fly)
+                .customer(customer)
+                .build();
+        return this.ticketRepository.save(ticketToPersist);
+    }
+
+    public ReservationEntity createReservation(HotelEntity hotel, CustomerEntity customer, Integer totalDays) {
+        var reservationToPersist = ReservationEntity.builder()
+                .id(UUID.randomUUID())
+                .totalDays(totalDays)
+                .dateTimeReservation(LocalDateTime.now())
+                .dateStart(LocalDate.now())
+                .dateEnd(LocalDate.now().plusDays(totalDays))
+                .price(hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage)))
+                .hotel(hotel)
+                .customer(customer)
+                .build();
+
+        return this.reservationRepository.save(reservationToPersist);
     }
 }

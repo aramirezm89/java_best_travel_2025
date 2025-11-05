@@ -33,22 +33,40 @@ public class TourService implements ITourService {
 
     @Override
     public void removeTicket(Long tourId, UUID ticketId) {
-
+        var tourToUpdate = this.tourRepository.findById(tourId).orElseThrow();
+        tourToUpdate.removeTicketById(ticketId);
+        this.tourRepository.save(tourToUpdate);
     }
 
     @Override
     public UUID addTicket(Long tourId, Long flyId) {
-        return null;
+        var tourToUpdate = this.tourRepository.findById(tourId).orElseThrow();
+        var fly = this.flyRepository.findById(flyId).orElseThrow();
+        var tourTicket = this.tourHelper.createTicket(fly, tourToUpdate.getCustomer());
+        tourToUpdate.addTicket(tourTicket);
+
+        this.tourRepository.save(tourToUpdate);
+        return tourTicket.getId();
     }
 
     @Override
     public void removeReservation(Long tourId, UUID reservationId) {
 
+        var tourToUpdate = this.tourRepository.findById(tourId).orElseThrow();
+        tourToUpdate.removeReservationById(reservationId);
+        this.tourRepository.save(tourToUpdate);
+
     }
 
     @Override
-    public UUID addReservation(Long tourId, Long reservationId) {
-        return null;
+    public UUID addReservation(Long tourId, Long hotelId, Integer totalDays) {
+        var tourToUpdate = this.tourRepository.findById(tourId).orElseThrow();
+        var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
+        var tourReservation = this.tourHelper.createReservation(hotel, tourToUpdate.getCustomer(), totalDays);
+        tourToUpdate.addReservation(tourReservation);
+        this.tourRepository.save(tourToUpdate);
+        return tourReservation.getId();
+
     }
 
     @Override
@@ -81,9 +99,9 @@ public class TourService implements ITourService {
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(Long tourId) {
 
-        var tourToDelete = this.tourRepository.findById(aLong).orElseThrow();
+        var tourToDelete = this.tourRepository.findById(tourId).orElseThrow();
         this.tourRepository.delete(tourToDelete);
 
     }

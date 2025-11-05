@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity(name = "tour")
 @Data
@@ -48,14 +49,17 @@ public class TourEntity implements Serializable {
     public void addTicket(TicketEntity ticket) {
         if(Objects.isNull(this.tickets)) this.tickets = new HashSet<>();
         this.tickets.add(ticket);
-        ticket.setTour(this);  // Sincroniza AMBOS lados inmediatamente
+        ticket.setTour(this);
     }
 
 
-    public void removeTicket(TicketEntity ticket) {
+    // borra un ticket de la lista tickets y lo quita de la relacion
+    public void removeTicketById(UUID id) {
         if(Objects.isNull(this.tickets)) return;
-        this.tickets.remove(ticket);
-        ticket.setTour(null);
+        this.tickets.forEach(ticket ->{
+            if(ticket.getId().equals(id)) ticket.setTour(null);
+        });
+
     }
 
     public void addReservation(ReservationEntity reservation) {
@@ -65,10 +69,11 @@ public class TourEntity implements Serializable {
     }
 
 
-    public void removeReservation(ReservationEntity reservation) {
+    public void removeReservationById(UUID reservationId) {
         if(Objects.isNull(this.reservations)) return;
-        this.reservations.remove(reservation);
-        reservation.setTour(null);
+        this.reservations.forEach(reservation -> {
+            if(reservation.getId().equals(reservationId)) reservation.setTour(null);
+        });
     }
 
 
