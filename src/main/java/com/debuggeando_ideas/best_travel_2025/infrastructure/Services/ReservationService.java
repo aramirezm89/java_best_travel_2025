@@ -8,6 +8,8 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.CustomerReposi
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.HotelRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.ReservationRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.IReservationService;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
+import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -27,10 +29,11 @@ public class ReservationService implements IReservationService {
     private final CustomerRepository customerRepository;
     private final HotelRepository hotelRepository;
     private final ReservationRepository reservationRepository;
+    private final CustomerHelper customerHelper;
     @Override
     public ReservationResponse create(ReservationRequest request) {
-        var customer = this.customerRepository.findById(request.getClientId()).orElseThrow();
-        var hotel = this.hotelRepository.findById(request.getHotelId()).orElseThrow();
+        var customer = this.customerRepository.findById(request.getClientId()).orElseThrow(() -> new IdNotFoundException("customer"));
+        var hotel = this.hotelRepository.findById(request.getHotelId()).orElseThrow(() -> new IdNotFoundException("hotel"));
         var reservationToPersist = ReservationEntity.builder()
                 .id(UUID.randomUUID())
                 .totalDays(request.getTotalDays())
@@ -44,12 +47,13 @@ public class ReservationService implements IReservationService {
 
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
         log.info("Reservation persisted: {}", reservationPersisted);
+        this.customerHelper.increase(customer.getDni(), ReservationService.class);
         return this.toReservationResponse(reservationPersisted);
     }
 
     @Override
     public ReservationResponse read(UUID uuid) {
-        var reservation = this.reservationRepository.findById(uuid).orElseThrow();
+        var reservation = this.reservationRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException("reservation"));
         log.info("Reservation by ID read: {}", reservation);
         return this.toReservationResponse(reservation);
     }
@@ -57,8 +61,8 @@ public class ReservationService implements IReservationService {
     @Override
     public ReservationResponse update(ReservationRequest request, UUID uuid) {
 
-        var hotel = this.hotelRepository.findById(request.getHotelId()).orElseThrow();
-        var reservationToUpdate = this.reservationRepository.findById(uuid).orElseThrow();
+        var hotel = this.hotelRepository.findById(request.getHotelId()).orElseThrow(() -> new IdNotFoundException("Hotel"));
+        var reservationToUpdate = this.reservationRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException("Reservation"));
 
         reservationToUpdate.setHotel(hotel);
         reservationToUpdate.setTotalDays(request.getTotalDays());
@@ -74,7 +78,7 @@ public class ReservationService implements IReservationService {
 
     @Override
     public void delete(UUID uuid) {
-        var reservationToDelete = this.reservationRepository.findById(uuid).orElseThrow();
+        var reservationToDelete = this.reservationRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException("Reservation"));
         this.reservationRepository.delete(reservationToDelete);
         log.info("Reservation deleted: {}", reservationToDelete.getId());
     }
@@ -91,7 +95,7 @@ public class ReservationService implements IReservationService {
 
     @Override
     public BigDecimal findPrice(Long hotelId) {
-        var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
+        var hotel = this.hotelRepository.findById(hotelId).orElseThrow(() -> new IdNotFoundException("Hotel"));
         return hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage));
     }
     public static final BigDecimal charges_price_percentage =  BigDecimal.valueOf(0.20);

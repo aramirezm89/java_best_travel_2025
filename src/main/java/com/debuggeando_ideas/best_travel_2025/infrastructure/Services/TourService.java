@@ -8,6 +8,7 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.HotelRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.TourRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITourService;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.TourHelper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class TourService implements ITourService {
     private final HotelRepository hotelRepository;
     private final CustomerRepository customerRepository;
     private final TourHelper tourHelper;
+    private final CustomerHelper customerHelper;
 
     @Override
     public void removeTicket(Long tourId, UUID ticketId) {
@@ -88,6 +90,7 @@ public class TourService implements ITourService {
 
         var tourToPersist = TourEntity.builder().customer(customer).tickets(tickets).reservations(reservations).build();
         var tourPersisted = this.tourRepository.save(tourToPersist);
+        this.customerHelper.increase(customer.getDni(), TourService.class);
         return this.toTourResponse(tourPersisted);
     }
 
