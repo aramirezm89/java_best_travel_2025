@@ -5,7 +5,7 @@ import com.debuggeando_ideas.best_travel_2025.api.models.responses.FlyResponse;
 import com.debuggeando_ideas.best_travel_2025.domain.entities.FlyEntity;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.IFlyService;
-import com.debuggeando_ideas.best_travel_2025.util.SortType;
+import com.debuggeando_ideas.best_travel_2025.util.enums.SortType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;

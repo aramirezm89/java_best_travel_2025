@@ -1,6 +1,8 @@
 package com.debuggeando_ideas.best_travel_2025.infrastructure.helpers;
 
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.CustomerRepository;
+import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
+import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +18,7 @@ public class CustomerHelper {
 
     public void increase(String CustomerId, Class<?> type){
 
-        var customerToUpdate = this.customerRepository.findById(CustomerId).orElseThrow();
+        var customerToUpdate = this.customerRepository.findById(CustomerId).orElseThrow(() -> new IdNotFoundException(Tables.CUSTOMER.name()));
        log.info("class: {}", type.getSimpleName());
         switch (type.getSimpleName()) {
              case "TourService" -> customerToUpdate.setTotalTours(customerToUpdate.getTotalTours() + 1);

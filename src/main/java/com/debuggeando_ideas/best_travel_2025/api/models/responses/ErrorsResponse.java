@@ -1,6 +1,9 @@
 package com.debuggeando_ideas.best_travel_2025.api.models.responses;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -10,6 +13,6 @@ import java.util.List;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorResponse extends BaseErrorResponse {
-    private String message;
+public class ErrorsResponse extends BaseErrorResponse {
+    private List<String> errors;
 }

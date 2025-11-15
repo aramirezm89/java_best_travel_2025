@@ -1,6 +1,6 @@
 package com.debuggeando_ideas.best_travel_2025.api.models.responses;
 
-import com.debuggeando_ideas.best_travel_2025.util.Aeroline;
+import com.debuggeando_ideas.best_travel_2025.util.enums.Aeroline;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

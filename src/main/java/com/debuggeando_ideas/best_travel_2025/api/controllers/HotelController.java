@@ -1,9 +1,8 @@
 package com.debuggeando_ideas.best_travel_2025.api.controllers;
 
-import com.debuggeando_ideas.best_travel_2025.api.models.responses.FlyResponse;
 import com.debuggeando_ideas.best_travel_2025.api.models.responses.HotelResponse;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.IHotelService;
-import com.debuggeando_ideas.best_travel_2025.util.SortType;
+import com.debuggeando_ideas.best_travel_2025.util.enums.SortType;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

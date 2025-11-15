@@ -8,8 +8,11 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.CustomerReposi
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.TicketRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITicketService;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.BlackListHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
 import com.debuggeando_ideas.best_travel_2025.util.BestTravelUtil;
+import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
+import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -30,11 +33,12 @@ public class TicketService implements ITicketService {
     private final CustomerRepository customerRepository;
     private final TicketRepository ticketRepository;
     private final CustomerHelper customerHelper;
-
+    private final BlackListHelper blackListHelper;
     @Override
     public TicketResponse create(TicketRequest request) {
-        var fly = this.flyRepository.findById(request.getFlyId()).orElseThrow();
-        var customer = this.customerRepository.findById(request.getCustomerId()).orElseThrow();
+        this.blackListHelper.isBlackListed(request.getCustomerId());
+        var fly = this.flyRepository.findById(request.getFlyId()).orElseThrow(() -> new IdNotFoundException(Tables.FLY.name()));
+        var customer = this.customerRepository.findById(request.getCustomerId()).orElseThrow(() -> new IdNotFoundException(Tables.CUSTOMER.name()));
         var ticketToPersist  = TicketEntity.builder()
                 .id(UUID.randomUUID())
                 .price(fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage)))
@@ -52,14 +56,14 @@ public class TicketService implements ITicketService {
 
     @Override
     public TicketResponse read(UUID uuid) {
-        var ticket = this.ticketRepository.findById(uuid).orElseThrow();
+        var ticket = this.ticketRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException(Tables.TICKET.name()));
         return this.toTicketResponse(ticket);
     }
 
     @Override
     public TicketResponse update(TicketRequest request, UUID uuid) {
-        var ticketToUpdate = this.ticketRepository.findById(uuid).orElseThrow();
-        var fly = this.flyRepository.findById(request.getFlyId()).orElseThrow();
+        var ticketToUpdate = this.ticketRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException(Tables.TICKET.name()));
+        var fly = this.flyRepository.findById(request.getFlyId()).orElseThrow(() -> new IdNotFoundException(Tables.FLY.name()));
 
         ticketToUpdate.setFly(fly);
         ticketToUpdate.setPrice(fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage)));
@@ -73,14 +77,14 @@ public class TicketService implements ITicketService {
 
     @Override
     public void delete(UUID uuid) {
-        var ticketToDelete = this.ticketRepository.findById(uuid).orElseThrow();
+        var ticketToDelete = this.ticketRepository.findById(uuid).orElseThrow(() -> new IdNotFoundException(Tables.TICKET.name()));
         this.ticketRepository.delete(ticketToDelete);
         log.info("Ticket deleted: {}", ticketToDelete.getId());
     }
 
     @Override
     public BigDecimal findPrice(Long flyId) {
-        var fly = this.flyRepository.findById(flyId).orElseThrow();
+        var fly = this.flyRepository.findById(flyId).orElseThrow(() -> new IdNotFoundException(Tables.FLY.name()));
         return fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage));
     }
 

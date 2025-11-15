@@ -1,12 +1,11 @@
 package com.debuggeando_ideas.best_travel_2025.domain.entities;
 
-import com.debuggeando_ideas.best_travel_2025.util.Aeroline;
+import com.debuggeando_ideas.best_travel_2025.util.enums.Aeroline;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "fly")
