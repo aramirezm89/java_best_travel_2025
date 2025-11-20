@@ -3,6 +3,7 @@ package com.debuggeando_ideas.best_travel_2025.api.controllers.error_handler;
 import com.debuggeando_ideas.best_travel_2025.api.models.responses.BaseErrorResponse;
 import com.debuggeando_ideas.best_travel_2025.api.models.responses.ErrorResponse;
 import com.debuggeando_ideas.best_travel_2025.api.models.responses.ErrorsResponse;
+import com.debuggeando_ideas.best_travel_2025.util.Exceptions.ApiLayerException;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,25 @@ public class BadRequestController {
         exception.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         return ErrorsResponse.builder()
                 .errors(errors)
+                .status(HttpStatus.BAD_REQUEST.name())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+
+    @ExceptionHandler(ApiLayerException.class)
+    public BaseErrorResponse handleApiLayerException(ApiLayerException exception) {
+        return ErrorResponse
+                .builder()
+                .message(exception.getMessage())
+                .status(HttpStatus.BAD_REQUEST.name())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+    @ExceptionHandler(NullPointerException.class)
+    public BaseErrorResponse handleNullPointerException(NullPointerException exception) {
+        return ErrorResponse
+                .builder()
+                .message(exception.getMessage())
                 .status(HttpStatus.BAD_REQUEST.name())
                 .code(HttpStatus.BAD_REQUEST.value())
                 .build();

@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface IReservationService extends CrudService<ReservationRequest,ReservationResponse, UUID>{
-    BigDecimal findPrice(Long hotelId);
+    BigDecimal findPrice(Long hotelId, String currency);
 }

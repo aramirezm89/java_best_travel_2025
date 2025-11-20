@@ -8,8 +8,10 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.CustomerReposi
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.HotelRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.ReservationRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.IReservationService;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.ApiCurrencyConectorHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.BlackListHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
+import com.debuggeando_ideas.best_travel_2025.util.Exceptions.ApiLayerException;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
 import lombok.AllArgsConstructor;
@@ -33,6 +35,7 @@ public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
+    private final ApiCurrencyConectorHelper apiCurrencyConectorHelper;
     @Override
     public ReservationResponse create(ReservationRequest request) {
         this.blackListHelper.isBlackListed(request.getClientId());
@@ -98,9 +101,22 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public BigDecimal findPrice(Long hotelId) {
+    public BigDecimal findPrice(Long hotelId, String currency) {
         var hotel = this.hotelRepository.findById(hotelId).orElseThrow(() -> new IdNotFoundException(Tables.HOTEL.name()));
-        return hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage));
+        var priceInDollars =  hotel.getPrice().add(hotel.getPrice().multiply(charges_price_percentage));
+
+        if(currency.equals("USD")){
+            log.info("Price in USD: {}", priceInDollars);
+            return priceInDollars;
+        };
+
+        var currencyDto = this.apiCurrencyConectorHelper.getCurrency(currency);
+
+
+        log.info("API currency in {}, response {} : {}", currencyDto.getDate(),currency, currencyDto.getRates().get(currency));
+
+        return priceInDollars.multiply(currencyDto.getRates().get(currency));
+
     }
     public static final BigDecimal charges_price_percentage =  BigDecimal.valueOf(0.20);
 
