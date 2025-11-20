@@ -1,8 +1,13 @@
 package com.debuggeando_ideas.best_travel_2025.api.controllers;
 
 import com.debuggeando_ideas.best_travel_2025.api.models.request.TicketRequest;
+import com.debuggeando_ideas.best_travel_2025.api.models.responses.ErrorResponse;
 import com.debuggeando_ideas.best_travel_2025.api.models.responses.TicketResponse;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITicketService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +20,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "ticket")
 @AllArgsConstructor
+@Tag(name = "Ticket", description = "Ticket Management")
 public class TicketController {
     private final ITicketService ticketService;
 
+    @ApiResponse(responseCode = "200", description = "Ticket created successfully")
+    @ApiResponse(responseCode = "400", description = "Ticket not created",content = {
+            @Content( mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    })
     @PostMapping
     public ResponseEntity<TicketResponse> post(@Valid @RequestBody TicketRequest ticketRequest) {
         return ResponseEntity.ok(this.ticketService.create(ticketRequest));
