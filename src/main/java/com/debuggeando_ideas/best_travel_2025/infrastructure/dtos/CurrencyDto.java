@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
 
+@Data
 public class CurrencyDto implements Serializable {
     @JsonProperty("date")
     private LocalDate date;
