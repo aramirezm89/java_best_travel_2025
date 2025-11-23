@@ -15,6 +15,17 @@ spring:
       connection-timeout: 20000
       idle-timeout: 300000
       max-lifetime: 600000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: best_traaavel_2025
+    password: ${EMAIL_SENDER_PASSWORD:ugrw sgxk ufvs ruvj}
+    properties:
+      mail:
+         smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 4000
   servlet:
@@ -34,3 +45,7 @@ server:
 
 #api-currency:
 #  apikey: 3d1QwhJIplRL0rxr1flUGofHgEPlFBdC
+
+#email
+email:
+  sender: best_traaavel_2025@gmail.com
