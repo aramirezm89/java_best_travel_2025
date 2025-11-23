@@ -36,6 +36,8 @@ public class ApiCurrencyConectorHelper {
                                    .build())
                    .retrieve()
                    .bodyToMono(CurrencyDto.class)
+                   .retry(1) // Reintenta 1 vez en caso de error (2 intentos en total)
+                   .doOnError(error -> log.warn("Retrying after error: {}", error.getMessage()))
                    .block();
            return  response;
        } catch (WebClientResponseException e) {

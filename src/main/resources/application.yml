@@ -18,7 +18,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: best_traaavel_2025
+    username: aramirez.unimarc@gmail.com
     password: ${EMAIL_SENDER_PASSWORD:ugrw sgxk ufvs ruvj}
     properties:
       mail:
@@ -47,5 +47,5 @@ server:
 #  apikey: 3d1QwhJIplRL0rxr1flUGofHgEPlFBdC
 
 #email
-email:
-  sender: best_traaavel_2025@gmail.com
+email_sender:
+  address: aramirez.unimarc@gmail.com

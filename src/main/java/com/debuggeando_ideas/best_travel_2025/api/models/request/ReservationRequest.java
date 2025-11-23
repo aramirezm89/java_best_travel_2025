@@ -25,5 +25,6 @@ public class ReservationRequest implements Serializable {
     @NotNull(message = "total days is required")
     private Integer totalDays;
     @Email(message = "The email is not valid")
+    @NotBlank(message = "email is required")
     private String email;
 }

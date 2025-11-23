@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface ITicketService extends CrudService<TicketRequest, TicketResponse, UUID> {
 
-    BigDecimal findPrice(Long flyId);
+    BigDecimal findPrice(Long flyId, String currency);
 }

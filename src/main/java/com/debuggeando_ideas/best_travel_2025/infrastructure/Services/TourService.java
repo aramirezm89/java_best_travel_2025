@@ -10,6 +10,7 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.TourRepository
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITourService;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.BlackListHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.EmailHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.TourHelper;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
@@ -36,6 +37,7 @@ public class TourService implements ITourService {
     private final TourHelper tourHelper;
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
+    private final EmailHelper emailHelper;
     @Override
     public void removeTicket(Long tourId, UUID ticketId) {
         var tourToUpdate = this.tourRepository.findById(tourId).orElseThrow(() -> new IdNotFoundException(Tables.TOUR.name()));
@@ -95,6 +97,9 @@ public class TourService implements ITourService {
         var tourToPersist = TourEntity.builder().customer(customer).tickets(tickets).reservations(reservations).build();
         var tourPersisted = this.tourRepository.save(tourToPersist);
         this.customerHelper.increase(customer.getDni(), TourService.class);
+        if(request.getEmail() != null){
+            this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.TOUR.name());
+        }
         return this.toTourResponse(tourPersisted);
     }
 

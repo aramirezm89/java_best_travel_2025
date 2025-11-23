@@ -47,7 +47,10 @@ public class TicketController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping
-    public ResponseEntity<Map<String, BigDecimal>> getPriceByFlyId(@RequestParam Long flyId) {
-        return ResponseEntity.ok(Map.of("price", this.ticketService.findPrice(flyId)));
+    public ResponseEntity<Map<String, BigDecimal>> getPriceByFlyId(@RequestParam Long flyId,@RequestHeader(required = false) String currency) {
+        if(currency == null){
+            currency = "USD";
+        }
+        return ResponseEntity.ok(Map.of("price", this.ticketService.findPrice(flyId, currency)));
     }
 }

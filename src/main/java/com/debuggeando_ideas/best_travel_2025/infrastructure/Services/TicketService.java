@@ -8,8 +8,10 @@ import com.debuggeando_ideas.best_travel_2025.domain.repositories.CustomerReposi
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel_2025.domain.repositories.TicketRepository;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.ITicketService;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.ApiCurrencyConectorHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.BlackListHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.EmailHelper;
 import com.debuggeando_ideas.best_travel_2025.util.BestTravelUtil;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
@@ -34,6 +36,8 @@ public class TicketService implements ITicketService {
     private final TicketRepository ticketRepository;
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
+    private final EmailHelper emailHelper;
+    private final ApiCurrencyConectorHelper apiCurrencyConectorHelper;
     @Override
     public TicketResponse create(TicketRequest request) {
         this.blackListHelper.isBlackListed(request.getCustomerId());
@@ -51,6 +55,10 @@ public class TicketService implements ITicketService {
          var ticketPersisted = this.ticketRepository.save(ticketToPersist);
          log.info("Ticket persisted: {}", ticketPersisted);
          this.customerHelper.increase(customer.getDni(), TicketService.class);
+
+        if(request.getEmail() != null){
+            this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.TICKET.name());
+        }
          return this.toTicketResponse(ticketPersisted);
     }
 
@@ -83,9 +91,18 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public BigDecimal findPrice(Long flyId) {
+    public BigDecimal findPrice(Long flyId, String currency) {
         var fly = this.flyRepository.findById(flyId).orElseThrow(() -> new IdNotFoundException(Tables.FLY.name()));
-        return fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage));
+
+        var priceInDollars =  fly.getPrice().add(fly.getPrice().multiply(charger_price_percentage));
+        if(currency.equals("USD")){
+            log.info("Price in USD: {}", priceInDollars);
+            return priceInDollars;
+        };
+        var currencyDto = this.apiCurrencyConectorHelper.getCurrency(currency);
+        var priceInCurrency = priceInDollars.multiply(currencyDto.getRates().get(currency));
+        log.info("Price in {}: {}", currency, priceInCurrency);
+        return priceInCurrency;
     }
 
     private TicketResponse toTicketResponse(TicketEntity ticketEntity) {

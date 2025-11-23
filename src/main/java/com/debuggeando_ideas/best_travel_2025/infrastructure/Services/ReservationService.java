@@ -11,6 +11,7 @@ import com.debuggeando_ideas.best_travel_2025.infrastructure.abstract_services.I
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.ApiCurrencyConectorHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.BlackListHelper;
 import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.CustomerHelper;
+import com.debuggeando_ideas.best_travel_2025.infrastructure.helpers.EmailHelper;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.ApiLayerException;
 import com.debuggeando_ideas.best_travel_2025.util.Exceptions.IdNotFoundException;
 import com.debuggeando_ideas.best_travel_2025.util.enums.Tables;
@@ -36,6 +37,7 @@ public class ReservationService implements IReservationService {
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
     private final ApiCurrencyConectorHelper apiCurrencyConectorHelper;
+    private final EmailHelper emailHelper;
     @Override
     public ReservationResponse create(ReservationRequest request) {
         this.blackListHelper.isBlackListed(request.getClientId());
@@ -55,6 +57,10 @@ public class ReservationService implements IReservationService {
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
         log.info("Reservation persisted: {}", reservationPersisted);
         this.customerHelper.increase(customer.getDni(), ReservationService.class);
+
+        if(request.getEmail() != null){
+            this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.RESERVATION.name());
+        }
         return this.toReservationResponse(reservationPersisted);
     }
 
